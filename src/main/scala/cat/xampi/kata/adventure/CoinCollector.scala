@@ -4,7 +4,8 @@ import cat.xampi.kata.adventure._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
- 
+class InvalidUserException extends Exception
+
 trait CoinCollector { 
   def collect(user: User): List[Coin]
   def collectAsFuture(user: User): Future[List[Coin]]
@@ -12,6 +13,7 @@ trait CoinCollector {
 class CoinCollectorImpl extends CoinCollector { 
   // Coins collected are the repetitions of letters in user name
   def collect(user: User) = {
+    if(user.name.isEmpty()) throw new InvalidUserException    
     getCoinsForeachOccurrence { countLetterOcurrences { user.name } }
   }
   
