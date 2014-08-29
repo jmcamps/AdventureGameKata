@@ -8,9 +8,18 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class AdventureGameSpec extends FlatSpec with Matchers {
 
-  "Treasure" should "be buyed in happy path" in { 
-     
+  val treasure = Treasure(5)
+  val user = User("xampi")
+  
+  "play" should "get the Treasure" in { 
+    // Arrange
+    val game = new AdventureGameImpl(new CoinCollectorImpl, new TreasureBuyerImpl)
     
+    // Act
+    val result = game.play(treasure, user)
+    
+    // Assert
+    result should be (treasure)
   }
 
   
