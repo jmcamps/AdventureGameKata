@@ -67,7 +67,7 @@ class CoinCollectorSpec extends FlatSpec with Matchers with ScalaFutures{
     val result = collector.collectAsTry(emptyUser)
 
     // Assert
-    result.failure.exception.getMessage() should be (null) 
+    assert(result.failure.exception.isInstanceOf[InvalidUserException])
   }
 
   "collectAsFuture" should "return a future with a correct coins list" in {

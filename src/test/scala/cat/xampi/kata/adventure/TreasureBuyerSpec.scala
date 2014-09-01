@@ -13,7 +13,7 @@ import org.scalatest.time.Seconds
 
 // add JUnit runner annotation to allow Infinitest work with Eclipse
 @RunWith(classOf[JUnitRunner])
-class TreasureBuyerSpec extends FlatSpec with Matchers with ScalaFutures{  
+class TreasureBuyerSpec extends FlatSpec with Matchers with ScalaFutures {  
   
   val listOfInsuficientCoins = List(Coin(1))
   val listOfCoins = List(Coin(1), Coin(5), Coin(7))
@@ -61,7 +61,7 @@ class TreasureBuyerSpec extends FlatSpec with Matchers with ScalaFutures{
     val result = buyer.buyAsTry(treasure, listOfInsuficientCoins)
 
     // Assert
-    result.failure.exception.getMessage() should be (null)   
+    assert(result.failure.exception.isInstanceOf[InsufficientFundsException])
   }
   
   "buyAsFuture" should "success the Future and return the Treasure" in {
