@@ -3,11 +3,15 @@ package cat.xampi.kata.adventure
 import cat.xampi.kata.adventure._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 
 class InvalidUserException extends Exception
 
 trait CoinCollector { 
   def collect(user: User): List[Coin]
+  def collectAsTry(user: User): Try[List[Coin]]
   def collectAsFuture(user: User): Future[List[Coin]]
 }
 class CoinCollectorImpl extends CoinCollector { 
@@ -16,6 +20,15 @@ class CoinCollectorImpl extends CoinCollector {
     if(user.name.isEmpty()) throw new InvalidUserException    
     getCoinsForeachOccurrence { countLetterOcurrences { user.name } }
   }
+  
+  def collectAsTry(user: User) = {
+    try {
+      Success(collect(user))
+    } catch {
+      case e: Exception => Failure(e) 
+    }
+  }
+  
   
   def collectAsFuture(user: User) = Future {
     Thread.sleep(1000)

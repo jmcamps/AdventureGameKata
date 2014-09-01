@@ -10,13 +10,19 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.concurrent._
 import org.scalatest.time.Span
 import org.scalatest.time.Seconds
+import org.scalatest.TryValues
+import org.scalatest.TryValues.SuccessOrFailure
+import scala.util.Try
 import cat.xampi.kata.adventure.InvalidUserException
 
 // add JUnit runner annotation to allow Infinitest work with Eclipse
 @RunWith(classOf[JUnitRunner])
 class CoinCollectorSpec extends FlatSpec with Matchers with ScalaFutures{
+  
+  import scala.language.implicitConversions
 
   val user = User("xamar")
+  val emptyUser = User("")
   val listOfCoins = List(Coin(1), Coin(2), Coin(1), Coin(1))
       
   "collect" should "return a list with correct coins" in {
@@ -24,7 +30,7 @@ class CoinCollectorSpec extends FlatSpec with Matchers with ScalaFutures{
     val collector: CoinCollector = new CoinCollectorImpl
 
     // Act
-    val result = collector.collect(user)
+    val result = collector collect user
 
     // Assert
     result should be (listOfCoins)
@@ -36,8 +42,32 @@ class CoinCollectorSpec extends FlatSpec with Matchers with ScalaFutures{
 
     // Act & Assert
     intercept[InvalidUserException] {
-      collector.collect(User(""))
+      collector collect emptyUser
     }      
+  }
+  
+  "collectAsTry" should "return a list with correct coins" in {
+    // Arrange
+    val collector: CoinCollector = new CoinCollectorImpl    
+    import org.scalatest.TryValues.convertTryToSuccessOrFailure
+    
+    // Act
+    val result = collector.collectAsTry(user)
+
+    // Assert
+    result.success.value should be (listOfCoins) 
+  }
+  
+  it should "return Failure(InvalidUserException) if called with empty user.name" in {
+    // Arrange
+    val collector: CoinCollector = new CoinCollectorImpl
+    import org.scalatest.TryValues.convertTryToSuccessOrFailure
+    
+    // Act
+    val result = collector.collectAsTry(emptyUser)
+
+    // Assert
+    result.failure.exception.getMessage() should be (null) 
   }
 
   "collectAsFuture" should "return a future with a correct coins list" in {
@@ -66,11 +96,11 @@ class CoinCollectorSpec extends FlatSpec with Matchers with ScalaFutures{
     val collector: CoinCollector = new CoinCollectorImpl
     
     // Act
-    val result = collector.collectAsFuture(User(""))
+    val result = collector.collectAsFuture(emptyUser)
     
     // Assert
     whenReady(result.failed, timeout(Span(6, Seconds))) { ex =>
-      ex shouldBe an [InvalidUserException]
+      ex shouldBe an [InvalidUserException] 
     }
   }
 

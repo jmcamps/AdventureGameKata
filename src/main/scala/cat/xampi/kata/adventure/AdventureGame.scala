@@ -8,6 +8,8 @@ case class User(name: String)
 
 trait AdventureGame {
   def play(treasure: Treasure, user: User): Treasure
+  //def playWithTry(treasure: Treasure, user: User): Treasure
+  //def playWithFutures(treasure: Treasure, user: User): Treasure
 }
 
 class AdventureGameImpl(coinCollector: CoinCollector, treasureBuyer: TreasureBuyer) extends AdventureGame {    
@@ -15,6 +17,16 @@ class AdventureGameImpl(coinCollector: CoinCollector, treasureBuyer: TreasureBuy
     val coinsCollected = coinCollector.collect(user)
     treasureBuyer.buy(treasure, coinsCollected)
   } 
+  
+//  def playWithTry(treasure: Treasure, user: User) = {
+//    val coinsCollected = coinCollector.collectAsTry(user)
+//    treasureBuyer.buyAsTry(treasure, coinsCollected)
+//  } 
+  
+//   def playWithFutures(treasure: Treasure, user: User) = {
+//    val coinsCollected = coinCollector.collectAsFuture(user)
+//    treasureBuyer.buy(treasure, coinsCollected)
+//  } 
 }
 
 

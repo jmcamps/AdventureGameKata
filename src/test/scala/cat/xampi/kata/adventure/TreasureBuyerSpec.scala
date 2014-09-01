@@ -40,6 +40,30 @@ class TreasureBuyerSpec extends FlatSpec with Matchers with ScalaFutures{
     }      
   }
   
+  "buyAsTry" should "return the Treasure" in {
+    // Arrange
+    val buyer: TreasureBuyer = new TreasureBuyerImpl
+    import org.scalatest.TryValues.convertTryToSuccessOrFailure
+
+    // Act 
+    val result = buyer.buyAsTry(treasure, listOfCoins)
+
+    // Assert
+    result.success.value should be (treasure)
+  }
+  
+  it should "return Failure[InsufficientFundsException] if called with insufficient funds" in {
+    // Arrange
+    val buyer: TreasureBuyer = new TreasureBuyerImpl
+    import org.scalatest.TryValues.convertTryToSuccessOrFailure
+
+    // Act 
+    val result = buyer.buyAsTry(treasure, listOfInsuficientCoins)
+
+    // Assert
+    result.failure.exception.getMessage() should be (null)   
+  }
+  
   "buyAsFuture" should "success the Future and return the Treasure" in {
     // Arrange
     val buyer: TreasureBuyer = new TreasureBuyerImpl
